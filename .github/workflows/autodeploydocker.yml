@@ -45,15 +45,17 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          script: | 
-#             dockerhub 에 토큰을 가지고 로그인 (private 인 경우에는 로그인 필요)
-#            echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-#            docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
-            # 기존에 실행되던 컨테이너 중지 && 삭제
+          script: |
+            # DockerHub 로그인 (private 이미지용)
+            echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+
+            # 기존 컨테이너 중지 및 삭제
             docker stop myweb || true
             docker rm myweb || true
-            # 변경된 이미지 pull
-            docker pull ${{ secrets.DOCKER_USER }}/web-app:latest            
-            # 새로운 컨테이너를 실행
-            docker run -d -p 8080:8080 --name myweb ${{ secrets.DOCKER_USER }}/web-app:latest
+
+            # 변경된 이미지 가져오기
+            docker pull ${{ secrets.DOCKER_USER }}/web-app:latest
+
+            # 새 컨테이너 실행 (자동 재시작 옵션 포함)
+            docker run -d -p 8080:8080 --restart unless-stopped --name myweb ${{ secrets.DOCKER_USER }}/web-app:latest
           script_stop: true
