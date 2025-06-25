@@ -35,7 +35,7 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USER }}/web-app:latest
 
   deploy-job:
-    needs: build-job
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -46,7 +46,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: | 
-            # dockerhub 에 토큰을 가지고 로그인 (private 인 경우에는 로그인 필요)
+#             dockerhub 에 토큰을 가지고 로그인 (private 인 경우에는 로그인 필요)
 #            echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 #            docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
             # 기존에 실행되던 컨테이너 중지 && 삭제
